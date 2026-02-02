@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>自動運転・ロボタクシー ニュースハブ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #f1f5f9;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
+    ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+
+    .container { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
+
+    /* Header */
+    header {
+      background: rgba(15, 23, 42, 0.95);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    .logo h1 { font-size: 20px; font-weight: 700; }
+    .logo p { font-size: 12px; color: #94a3b8; }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .last-updated {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #94a3b8;
+      font-size: 13px;
+    }
+    .btn-refresh {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .btn-refresh:hover { opacity: 0.9; }
+
+    /* Main */
+    main { padding: 24px 0; }
+
+    /* Section Title */
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    /* Top News */
+    .top-news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .top-news-card {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+    }
+    .rank-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: #0f172a;
+    }
+    .rank-1 { background: #fbbf24; }
+    .rank-2 { background: #94a3b8; }
+    .rank-3 { background: #cd7f32; }
+
+    /* Tags */
+    .tags {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .tag {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .tag-source {
+      background: rgba(148, 163, 184, 0.2);
+      font-weight: 400;
+    }
+
+    /* Cards */
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .card-summary {
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+    }
+    .score-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .time-ago {
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    /* Filters Section */
+    .filters-section {
+      background: rgba(30, 41, 59, 0.5);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+      border: 1px solid rgba(148, 163, 184, 0.1);
+    }
+    .filters-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(15, 23, 42, 0.8);
+      border-radius: 8px;
+      padding: 10px 14px;
+      flex: 1;
+      max-width: 400px;
+      min-width: 200px;
+    }
+    .search-box input {
+      background: none;
+      border: none;
+      color: #f1f5f9;
+      font-size: 14px;
+      width: 100%;
+      outline: none;
+    }
+    .search-box input::placeholder { color: #64748b; }
+
+    .btn-filter {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 14px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid transparent;
+      border-radius: 8px;
+      color: #f1f5f9;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .btn-filter.active {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: #3b82f6;
+    }
+
+    .sort-select {
+      padding: 8px 12px;
+      background: rgba(15, 23, 42, 0.8);
+      border: none;
+      border-radius: 6px;
+      color: #f1f5f9;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .filter-panel {
+      display: none;
+      border-top: 1px solid rgba(148, 163, 184, 0.1);
+      padding-top: 16px;
+      margin-top: 16px;
+    }
+    .filter-panel.show { display: block; }
+
+    .filter-group {
+      margin-bottom: 16px;
+    }
+    .filter-group:last-child { margin-bottom: 0; }
+    .filter-label {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 8px;
+    }
+    .filter-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: none;
+      background: rgba(15, 23, 42, 0.8);
+      color: #f1f5f9;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover { background: rgba(59, 130, 246, 0.3); }
+    .filter-btn.active { background: #3b82f6; }
+
+    .company-btn {
+      padding: 4px 10px;
+      border-radius: 4px;
+      border: 2px solid transparent;
+      background: rgba(15, 23, 42, 0.8);
+      color: #f1f5f9;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+
+    /* News List */
+    .news-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .news-item {
+      background: rgba(30, 41, 59, 0.5);
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      display: flex;
+      gap: 16px;
+    }
+    .priority-bar {
+      width: 4px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .news-content { flex: 1; min-width: 0; }
+
+    .news-meta {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .meta-tag {
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+    .importance-badge {
+      font-weight: 600;
+    }
+    .news-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .news-summary {
+      font-size: 14px;
+      color: #94a3b8;
+      margin-bottom: 12px;
+      line-height: 1.7;
+    }
+    .hash-tags {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .hash-tag {
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      font-size: 11px;
+    }
+    .news-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .engagement {
+      display: flex;
+      gap: 16px;
+      color: #64748b;
+      font-size: 13px;
+    }
+    .engagement span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .news-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .priority-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .btn-read {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+      text-decoration: none;
+      font-size: 13px;
+    }
+    .btn-read:hover { background: rgba(59, 130, 246, 0.3); }
+
+    /* Info Sections */
+    .info-section {
+      margin-top: 32px;
+      background: rgba(30, 41, 59, 0.3);
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid rgba(148, 163, 184, 0.1);
+    }
+    .info-section h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .info-section p {
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.7;
+    }
+    .info-section strong { color: #f1f5f9; }
+
+    .api-section {
+      background: rgba(139, 92, 246, 0.1);
+      border-color: rgba(139, 92, 246, 0.3);
+    }
+    .api-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .api-card {
+      background: rgba(15, 23, 42, 0.5);
+      padding: 12px;
+      border-radius: 8px;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 48px;
+      padding: 24px;
+      border-top: 1px solid rgba(148, 163, 184, 0.1);
+      text-align: center;
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-inner { flex-direction: column; text-align: center; }
+      .top-news-grid { grid-template-columns: 1fr; }
+      .news-item { flex-direction: column; }
+      .priority-bar { width: 100%; height: 4px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">🚗</div>
+        <div>
+          <h1>自動運転・ロボタクシー ニュースハブ</h1>
+          <p>Autonomous Driving & Robotaxi News Hub</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="last-updated">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span id="lastUpdated"></span>
+        </div>
+        <button class="btn-refresh" onclick="location.reload()">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          更新
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Top News Section -->
+    <section>
+      <h2 class="section-title">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        本日のトップニュース
+      </h2>
+      <div class="top-news-grid" id="topNews"></div>
+    </section>
+
+    <!-- Filters Section -->
+    <section class="filters-section">
+      <div class="filters-row">
+        <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 280px;">
+          <div class="search-box">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="text" id="searchInput" placeholder="キーワード検索...">
+          </div>
+          <button class="btn-filter" id="filterToggle" onclick="toggleFilters()">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
+            フィルター
+          </button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 13px; color: #94a3b8;">並び順:</span>
+          <select class="sort-select" id="sortSelect">
+            <option value="priority">優先度スコア</option>
+            <option value="time">新着順</option>
+            <option value="engagement">エンゲージメント</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filter-panel" id="filterPanel">
+        <div class="filter-group">
+          <p class="filter-label">地域</p>
+          <div class="filter-buttons" id="countryFilters"></div>
+        </div>
+        <div class="filter-group">
+          <p class="filter-label">情報ソース</p>
+          <div class="filter-buttons" id="sourceFilters"></div>
+        </div>
+        <div class="filter-group">
+          <p class="filter-label">企業</p>
+          <div class="filter-buttons" id="companyFilters"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- News List -->
+    <section>
+      <h2 class="section-title">ニュース一覧 <span id="newsCount" style="font-size: 14px; color: #64748b; font-weight: 400; margin-left: 8px;"></span></h2>
+      <div class="news-list" id="newsList"></div>
+    </section>
+
+    <!-- Score Info -->
+    <section class="info-section">
+      <h3>📊 優先度スコアについて</h3>
+      <p>
+        優先度スコアは以下の要素を組み合わせて算出されています：<br>
+        <strong>時間減衰 (30%)</strong> - 新しいニュースほど高スコア（24時間で半減）<br>
+        <strong>エンゲージメント (35%)</strong> - いいね、コメント、シェア数を考慮<br>
+        <strong>ソース信頼度 (20%)</strong> - 公式発表 &gt; ニュースメディア &gt; SNS<br>
+        <strong>重要度ボーナス (15%)</strong> - 業界に大きな影響を与えるニュースに加点
+      </p>
+    </section>
+
+    <!-- API Guide -->
+    <section class="info-section api-section">
+      <h3>🔧 API連携ガイド（Daily更新の実装）</h3>
+      <p>このダッシュボードは現在デモデータで動作しています。Daily更新を実現するには以下のAPIを活用：</p>
+      <div class="api-grid">
+        <div class="api-card"><strong>📰 ニュースAPI</strong><br>NewsAPI.org, GNews</div>
+        <div class="api-card"><strong>𝕏 X (Twitter) API</strong><br>Twitter API v2</div>
+        <div class="api-card"><strong>🔴 Reddit API</strong><br>Reddit Data API</div>
+      </div>
+      <p style="color: #a5b4fc;">Cron/GitHub Actionsで毎日定時にデータ取得 → JSONファイル更新 → Vercel/Netlifyで自動デプロイ</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>🚗 自動運転・ロボタクシー ニュースハブ | Daily更新 | 対象企業: Tesla, Waymo, Uber, Lyft, Zoox, Lucid, DiDi, Pony.ai, WeRide, Baidu, Toyota, Honda, 日産 他</p>
+  </footer>
+
+  <script>
+    // ===== データ定義 =====
+    const COMPANIES = [
+      { id: 'tesla', name: 'Tesla', country: 'us', color: '#E31937' },
+      { id: 'waymo', name: 'Waymo', country: 'us', color: '#4285F4' },
+      { id: 'uber', name: 'Uber', country: 'us', color: '#000000' },
+      { id: 'lyft', name: 'Lyft', country: 'us', color: '#FF00BF' },
+      { id: 'zoox', name: 'Zoox', country: 'us', color: '#6B4EFF' },
+      { id: 'lucid', name: 'Lucid', country: 'us', color: '#7C7C7C' },
+      { id: 'cruise', name: 'Cruise', country: 'us', color: '#FF6B00' },
+      { id: 'aurora', name: 'Aurora', country: 'us', color: '#00C7B7' },
+      { id: 'didi', name: 'DiDi', country: 'cn', color: '#FF7A00' },
+      { id: 'pony', name: 'Pony.ai', country: 'cn', color: '#00D4AA' },
+      { id: 'weride', name: 'WeRide', country: 'cn', color: '#0066FF' },
+      { id: 'baidu', name: 'Baidu Apollo', country: 'cn', color: '#2932E1' },
+      { id: 'momenta', name: 'Momenta', country: 'cn', color: '#FF3366' },
+      { id: 'toyota', name: 'Toyota', country: 'jp', color: '#EB0A1E' },
+      { id: 'honda', name: 'Honda', country: 'jp', color: '#CC0000' },
+      { id: 'sony', name: 'Sony (AFEELA)', country: 'jp', color: '#000000' },
+      { id: 'nissan', name: '日産', country: 'jp', color: '#C3002F' },
+      { id: 'tier4', name: 'Tier IV', country: 'jp', color: '#00A0E9' }
+    ];
+
+    const SOURCES = [
+      { id: 'news', name: 'ニュース', icon: '📰', weight: 1.0 },
+      { id: 'x', name: 'X (Twitter)', icon: '𝕏', weight: 0.8 },
+      { id: 'reddit', name: 'Reddit', icon: '🔴', weight: 0.7 },
+      { id: 'official', name: '公式発表', icon: '🏢', weight: 1.5 }
+    ];
+
+    const COUNTRIES = [
+      { id: 'all', name: 'すべて', flag: '🌍' },
+      { id: 'us', name: 'アメリカ', flag: '🇺🇸' },
+      { id: 'cn', name: '中国', flag: '🇨🇳' },
+      { id: 'jp', name: '日本', flag: '🇯🇵' }
+    ];
+
+    // ===== モックニュースデータ =====
+    function generateMockNews() {
+      const now = new Date();
+      return [
+        { id: 1, title: 'Waymo、ロサンゼルスでロボタクシーサービスを正式開始', summary: 'Waymoがロサンゼルス市内全域でロボタクシーサービス「Waymo One」を一般向けに開始。24時間対応で月間10万回以上の配車を目指す。', source: 'news', sourceDetail: 'TechCrunch', company: 'waymo', url: '#', publishedAt: new Date(now - 2 * 60 * 60 * 1000).toISOString(), engagement: { likes: 2840, comments: 156, shares: 892 }, importance: 'high', tags: ['サービス開始', 'ロサンゼルス', '商用化'] },
+        { id: 2, title: 'Tesla FSD v13.2、日本での認証取得に向け調整中', summary: 'イーロン・マスク氏がXで発表。日本の道路交通法規制に対応したFSD（Full Self-Driving）の特別バージョンを開発中とのこと。', source: 'x', sourceDetail: '@elonmusk', company: 'tesla', url: '#', publishedAt: new Date(now - 5 * 60 * 60 * 1000).toISOString(), engagement: { likes: 45200, comments: 3200, shares: 12800 }, importance: 'high', tags: ['FSD', '日本市場', '規制対応'] },
+        { id: 3, title: 'Baidu Apollo、深センで1000台規模のロボタクシー運用を発表', summary: '中国Baiduが深セン市と提携し、世界最大規模のロボタクシーフリートを展開。2025年内に5都市への拡大を計画。', source: 'official', sourceDetail: 'Baidu公式発表', company: 'baidu', url: '#', publishedAt: new Date(now - 8 * 60 * 60 * 1000).toISOString(), engagement: { likes: 1520, comments: 89, shares: 445 }, importance: 'high', tags: ['中国', 'フリート拡大', '深セン'] },
+        { id: 4, title: 'r/SelfDrivingCars で話題: Cruise復活の噂、GM内部リークか', summary: 'RedditでGM関係者を名乗る投稿が話題に。Cruiseのロボタクシー事業が2025年後半に新体制で再開する可能性について議論が活発化。', source: 'reddit', sourceDetail: 'r/SelfDrivingCars', company: 'cruise', url: '#', publishedAt: new Date(now - 12 * 60 * 60 * 1000).toISOString(), engagement: { likes: 2100, comments: 340, shares: 89 }, importance: 'medium', tags: ['Cruise', 'GM', '噂', '復活'] },
+        { id: 5, title: 'Tier IV、国内初の完全無人自動運転バスの公道走行許可を取得', summary: 'Tier IVが開発するAutowareベースの自動運転バスが、東京都内の特定エリアで完全無人での公道走行許可を国土交通省から取得。', source: 'news', sourceDetail: '日経新聞', company: 'tier4', url: '#', publishedAt: new Date(now - 3 * 60 * 60 * 1000).toISOString(), engagement: { likes: 890, comments: 67, shares: 234 }, importance: 'high', tags: ['日本', 'Autoware', '無人運転', '許可'] },
+        { id: 6, title: 'Pony.ai、ナスダック上場に向けSEC申請完了', summary: '中国の自動運転スタートアップPony.aiがナスダック上場に向けた書類をSECに提出。評価額は85億ドルを想定。', source: 'news', sourceDetail: 'Bloomberg', company: 'pony', url: '#', publishedAt: new Date(now - 6 * 60 * 60 * 1000).toISOString(), engagement: { likes: 1250, comments: 98, shares: 567 }, importance: 'medium', tags: ['IPO', 'ナスダック', '資金調達'] },
+        { id: 7, title: '【話題】Zooxの新型車両デザインがリーク、従来の倍のバッテリー容量か', summary: 'Xで拡散中のリーク画像によると、Zooxが開発中の次世代ロボタクシーは航続距離が大幅に伸び、長距離輸送にも対応可能に。', source: 'x', sourceDetail: '@AutonomousDrive', company: 'zoox', url: '#', publishedAt: new Date(now - 4 * 60 * 60 * 1000).toISOString(), engagement: { likes: 8900, comments: 450, shares: 2100 }, importance: 'medium', tags: ['リーク', '新型車両', 'バッテリー'] },
+        { id: 8, title: 'Honda・Sony、AFEELAの自動運転レベル3対応を2026年に前倒し', summary: 'ソニー・ホンダモビリティがAFEELAの自動運転機能を強化。当初2027年予定だったレベル3対応を1年前倒しで実装予定。', source: 'official', sourceDetail: 'Sony Honda Mobility', company: 'sony', url: '#', publishedAt: new Date(now - 10 * 60 * 60 * 1000).toISOString(), engagement: { likes: 3400, comments: 210, shares: 890 }, importance: 'high', tags: ['AFEELA', 'レベル3', '前倒し'] },
+        { id: 9, title: 'WeRide、UAEドバイでの自動運転タクシー運行許可を取得', summary: '中国WeRideが中東進出。ドバイでの商業運行許可を取得し、2025年Q2からサービス開始予定。中東初の中国自動運転企業に。', source: 'news', sourceDetail: 'Reuters', company: 'weride', url: '#', publishedAt: new Date(now - 15 * 60 * 60 * 1000).toISOString(), engagement: { likes: 670, comments: 45, shares: 189 }, importance: 'medium', tags: ['中東', 'ドバイ', '海外展開'] },
+        { id: 10, title: 'Uber、Waymoとの提携をアトランタにも拡大 - ロボタクシー予約可能に', summary: 'UberアプリからWaymoのロボタクシーが予約可能なエリアがアトランタにも拡大。両社の提携が着実に進展。', source: 'news', sourceDetail: 'The Verge', company: 'uber', url: '#', publishedAt: new Date(now - 7 * 60 * 60 * 1000).toISOString(), engagement: { likes: 1890, comments: 123, shares: 456 }, importance: 'medium', tags: ['提携', 'アトランタ', 'アプリ連携'] },
+        { id: 11, title: '日産、ProPILOT 3.0でハンズオフ走行エリアを全国高速道路に拡大', summary: '日産が次世代プロパイロットの詳細を発表。2025年秋からの新型車に搭載し、日本全国の高速道路でハンズオフ走行が可能に。', source: 'official', sourceDetail: '日産自動車', company: 'nissan', url: '#', publishedAt: new Date(now - 9 * 60 * 60 * 1000).toISOString(), engagement: { likes: 2100, comments: 178, shares: 567 }, importance: 'high', tags: ['ProPILOT', 'ハンズオフ', '日本'] },
+        { id: 12, title: 'DiDi、自動運転部門を分社化 - 独立したIPO検討へ', summary: '中国配車大手DiDiが自動運転部門を分社化すると発表。独立した形でのIPOを視野に入れ、外部資金調達を加速。', source: 'news', sourceDetail: 'South China Morning Post', company: 'didi', url: '#', publishedAt: new Date(now - 20 * 60 * 60 * 1000).toISOString(), engagement: { likes: 890, comments: 67, shares: 234 }, importance: 'medium', tags: ['分社化', 'IPO', '組織再編'] },
+        { id: 13, title: 'Aurora、テキサス州でドライバーレストラック商用輸送を開始', summary: 'Aurora Innovationがテキサス州の公道でドライバー不在の自動運転トラックによる商用貨物輸送を開始。物流業界に革命か。', source: 'news', sourceDetail: 'Forbes', company: 'aurora', url: '#', publishedAt: new Date(now - 11 * 60 * 60 * 1000).toISOString(), engagement: { likes: 3200, comments: 245, shares: 890 }, importance: 'high', tags: ['トラック', '物流', '商用化'] },
+        { id: 14, title: 'r/teslamotors: FSD v13の実際の挙動を検証 - 驚異的な進化との声', summary: 'RedditユーザーがFSD v13の実走行動画を多数投稿。複雑な交差点や夜間走行での性能向上に驚きの声が相次ぐ。', source: 'reddit', sourceDetail: 'r/teslamotors', company: 'tesla', url: '#', publishedAt: new Date(now - 14 * 60 * 60 * 1000).toISOString(), engagement: { likes: 5600, comments: 890, shares: 340 }, importance: 'medium', tags: ['FSD', 'ユーザーレビュー', '動画'] },
+        { id: 15, title: 'Toyota、Woven Cityでの自動運転実証実験の中間報告を公開', summary: 'トヨタが静岡県のWoven Cityで行っている自動運転実証実験の進捗を発表。生活空間における自動運転の新たな知見を共有。', source: 'official', sourceDetail: 'Toyota', company: 'toyota', url: '#', publishedAt: new Date(now - 18 * 60 * 60 * 1000).toISOString(), engagement: { likes: 1560, comments: 89, shares: 345 }, importance: 'medium', tags: ['Woven City', '実証実験', '研究'] },
+        { id: 16, title: '【速報】Lucid、自動運転技術でMobileyeとの独占契約を締結', summary: 'Lucid MotorsがIntel傘下のMobileyeと自動運転技術で独占パートナーシップ契約。次世代Lucid Airに最新ADASを搭載予定。', source: 'news', sourceDetail: 'Electrek', company: 'lucid', url: '#', publishedAt: new Date(now - 1 * 60 * 60 * 1000).toISOString(), engagement: { likes: 4500, comments: 320, shares: 1200 }, importance: 'high', tags: ['提携', 'Mobileye', 'ADAS'] }
+      ];
+    }
+
+    // ===== ユーティリティ関数 =====
+    function calculatePriorityScore(news) {
+      const now = new Date();
+      const publishedAt = new Date(news.publishedAt);
+      const hoursAgo = (now - publishedAt) / (1000 * 60 * 60);
+      const timeScore = Math.max(0, 100 - hoursAgo * 4);
+      const totalEngagement = news.engagement.likes + news.engagement.comments * 3 + news.engagement.shares * 2;
+      const engagementScore = Math.min(100, Math.log10(totalEngagement + 1) * 25);
+      const source = SOURCES.find(s => s.id === news.source);
+      const sourceScore = (source ? source.weight : 1.0) * 30;
+      const importanceBonus = news.importance === 'high' ? 20 : news.importance === 'medium' ? 10 : 0;
+      return Math.round(timeScore * 0.3 + engagementScore * 0.35 + sourceScore * 0.2 + importanceBonus * 0.15);
+    }
+
+    function getTimeAgo(dateString) {
+      const now = new Date();
+      const date = new Date(dateString);
+      const diffMs = now - date;
+      const diffMins = Math.floor(diffMs / (1000 * 60));
+      const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      if (diffMins < 60) return diffMins + '分前';
+      if (diffHours < 24) return diffHours + '時間前';
+      return diffDays + '日前';
+    }
+
+    function getPriorityColor(score) {
+      if (score >= 70) return '#22c55e';
+      if (score >= 50) return '#eab308';
+      if (score >= 30) return '#f97316';
+      return '#94a3b8';
+    }
+
+    function getCompany(id) { return COMPANIES.find(c => c.id === id); }
+    function getSource(id) { return SOURCES.find(s => s.id === id); }
+
+    // ===== 状態管理 =====
+    let newsData = [];
+    let selectedCountry = 'all';
+    let selectedSources = [];
+    let selectedCompanies = [];
+    let searchQuery = '';
+    let sortBy = 'priority';
+
+    // ===== UI更新関数 =====
+    function toggleFilters() {
+      const panel = document.getElementById('filterPanel');
+      const btn = document.getElementById('filterToggle');
+      panel.classList.toggle('show');
+      btn.classList.toggle('active');
+    }
+
+    function renderTopNews(news) {
+      const container = document.getElementById('topNews');
+      const top3 = news.slice(0, 3);
+      container.innerHTML = top3.map((item, index) => {
+        const company = getCompany(item.company);
+        const source = getSource(item.source);
+        const score = item.priorityScore;
+        return `
+          <div class="top-news-card">
+            <div class="rank-badge rank-${index + 1}">${index + 1}</div>
+            <div class="tags">
+              <span class="tag" style="background: ${company.color}">${company.name}</span>
+              <span class="tag tag-source">${source.icon} ${source.name}</span>
+            </div>
+            <h3 class="card-title">${item.title}</h3>
+            <p class="card-summary">${item.summary.slice(0, 100)}...</p>
+            <div class="card-footer">
+              <span class="score-badge" style="background: ${getPriorityColor(score)}">⭐ スコア: ${score}</span>
+              <span class="time-ago">${getTimeAgo(item.publishedAt)}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderNewsList(news) {
+      const container = document.getElementById('newsList');
+      document.getElementById('newsCount').textContent = `(${news.length}件)`;
+
+      container.innerHTML = news.map(item => {
+        const company = getCompany(item.company);
+        const source = getSource(item.source);
+        const score = item.priorityScore;
+        const color = getPriorityColor(score);
+
+        let importanceBadge = '';
+        if (item.importance === 'high') {
+          importanceBadge = '<span class="meta-tag importance-badge" style="background: #fee2e2; color: #dc2626;">重要</span>';
+        } else if (item.importance === 'medium') {
+          importanceBadge = '<span class="meta-tag importance-badge" style="background: #fef3c7; color: #d97706;">注目</span>';
+        }
+
+        return `
+          <article class="news-item">
+            <div class="priority-bar" style="background: ${color}"></div>
+            <div class="news-content">
+              <div class="news-meta">
+                <span class="meta-tag" style="background: ${company.color}; font-weight: 600;">${company.name}</span>
+                <span class="meta-tag" style="background: rgba(148, 163, 184, 0.15);">${source.icon} ${source.name} · ${item.sourceDetail}</span>
+                ${importanceBadge}
+                <span class="time-ago" style="margin-left: auto;">${getTimeAgo(item.publishedAt)}</span>
+              </div>
+              <h3 class="news-title">${item.title}</h3>
+              <p class="news-summary">${item.summary}</p>
+              <div class="hash-tags">
+                ${item.tags.map(tag => `<span class="hash-tag">#${tag}</span>`).join('')}
+              </div>
+              <div class="news-footer">
+                <div class="engagement">
+                  <span>❤️ ${item.engagement.likes.toLocaleString()}</span>
+                  <span>💬 ${item.engagement.comments.toLocaleString()}</span>
+                  <span>🔄 ${item.engagement.shares.toLocaleString()}</span>
+                </div>
+                <div class="news-actions">
+                  <span class="priority-badge" style="background: ${color}22; border: 1px solid ${color}; color: ${color};">優先度: ${score}</span>
+                  <a href="${item.url}" class="btn-read">記事を読む →</a>
+                </div>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function renderFilters() {
+      // Country filters
+      document.getElementById('countryFilters').innerHTML = COUNTRIES.map(c =>
+        `<button class="filter-btn ${selectedCountry === c.id ? 'active' : ''}" onclick="setCountry('${c.id}')">${c.flag} ${c.name}</button>`
+      ).join('');
+
+      // Source filters
+      document.getElementById('sourceFilters').innerHTML = SOURCES.map(s =>
+        `<button class="filter-btn ${selectedSources.includes(s.id) ? 'active' : ''}" onclick="toggleSource('${s.id}')">${s.icon} ${s.name}</button>`
+      ).join('');
+
+      // Company filters
+      document.getElementById('companyFilters').innerHTML = COMPANIES.map(c => {
+        const isActive = selectedCompanies.includes(c.id);
+        return `<button class="company-btn" style="border-color: ${isActive ? c.color : 'transparent'}; background: ${isActive ? c.color + '33' : 'rgba(15, 23, 42, 0.8)'};" onclick="toggleCompany('${c.id}')">${c.name}</button>`;
+      }).join('');
+    }
+
+    function filterAndSort() {
+      let result = newsData.map(n => ({ ...n, priorityScore: calculatePriorityScore(n) }));
+
+      // Apply filters
+      if (selectedSources.length > 0) {
+        result = result.filter(n => selectedSources.includes(n.source));
+      }
+      if (selectedCompanies.length > 0) {
+        result = result.filter(n => selectedCompanies.includes(n.company));
+      }
+      if (selectedCountry !== 'all') {
+        const countryCompanies = COMPANIES.filter(c => c.country === selectedCountry).map(c => c.id);
+        result = result.filter(n => countryCompanies.includes(n.company));
+      }
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        result = result.filter(n =>
+          n.title.toLowerCase().includes(q) ||
+          n.summary.toLowerCase().includes(q) ||
+          n.tags.some(t => t.toLowerCase().includes(q))
+        );
+      }
+
+      // Sort
+      if (sortBy === 'priority') {
+        result.sort((a, b) => b.priorityScore - a.priorityScore);
+      } else if (sortBy === 'time') {
+        result.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+      } else if (sortBy === 'engagement') {
+        result.sort((a, b) => (b.engagement.likes + b.engagement.shares) - (a.engagement.likes + a.engagement.shares));
+      }
+
+      return result;
+    }
+
+    function updateUI() {
+      const filtered = filterAndSort();
+      renderTopNews(filtered);
+      renderNewsList(filtered);
+      renderFilters();
+    }
+
+    // ===== イベントハンドラ =====
+    function setCountry(id) {
+      selectedCountry = id;
+      updateUI();
+    }
+
+    function toggleSource(id) {
+      if (selectedSources.includes(id)) {
+        selectedSources = selectedSources.filter(s => s !== id);
+      } else {
+        selectedSources.push(id);
+      }
+      updateUI();
+    }
+
+    function toggleCompany(id) {
+      if (selectedCompanies.includes(id)) {
+        selectedCompanies = selectedCompanies.filter(c => c !== id);
+      } else {
+        selectedCompanies.push(id);
+      }
+      updateUI();
+    }
+
+    // ===== JSONデータ取得 =====
+    async function fetchNewsData() {
+      try {
+        const response = await fetch('./news-data.json');
+        if (!response.ok) throw new Error('JSON not found');
+        const data = await response.json();
+
+        // 最終更新日時を表示
+        if (data.lastUpdated) {
+          const date = new Date(data.lastUpdated);
+          document.getElementById('lastUpdated').textContent = '最終更新: ' + date.toLocaleString('ja-JP', {
+            year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+          });
+        }
+
+        console.log('✅ news-data.json から ' + data.news.length + ' 件のニュースを読み込みました');
+        return data.news;
+      } catch (error) {
+        console.log('⚠️ news-data.json が見つからないため、デモデータを使用します');
+        document.getElementById('lastUpdated').textContent = '最終更新: ' + new Date().toLocaleString('ja-JP', {
+          year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+        }) + ' (デモ)';
+        return generateMockNews();
+      }
+    }
+
+    // ===== 初期化 =====
+    document.addEventListener('DOMContentLoaded', async function() {
+      // Load data (JSONまたはフォールバック)
+      newsData = await fetchNewsData();
+
+      // Setup event listeners
+      document.getElementById('searchInput').addEventListener('input', function(e) {
+        searchQuery = e.target.value;
+        updateUI();
+      });
+
+      document.getElementById('sortSelect').addEventListener('change', function(e) {
+        sortBy = e.target.value;
+        updateUI();
+      });
+
+      // Initial render
+      updateUI();
+    });
+  </script>
+</body>
+</html>
